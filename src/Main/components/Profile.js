@@ -3,6 +3,7 @@ import Page from "./Page"
 import { useParams } from "react-router-dom"
 import Axios from "axios"
 import StateContext from "../StateContext"
+import ProfilePost from "./ProfilePost"
 
 export default function Profile() {
   const { username } = useParams()
@@ -15,16 +16,21 @@ export default function Profile() {
   })
 
   useEffect(() => {
+    const ourRequest = Axios.CancelToken.source()
+
     async function fetcthData() {
       try {
-        const response = await Axios.post(`/profile/${username}`, { toke: appState.user.token })
+        const response = await Axios.post(`/profile/${username}`, { token: appState.user.token }, { cancelToken: ourRequest.token })
         setProfileData(response.data)
-        console.log(response.data)
+        //console.log(response.data)
       } catch (e) {
         console.log("therea was a problem seeing the profile")
       }
     }
     fetcthData() //Calls fetchData after defining it
+    return () => {
+      ourRequest.cancel()
+    }
   }, [])
 
   return (
@@ -48,20 +54,7 @@ export default function Profile() {
         </a>
       </div>
 
-      <div className="list-group">
-        <a href="#" className="list-group-item list-group-item-action">
-          <img className="avatar-tiny" src="https://gravatar.com/avatar/b9408a09298632b5151200f3449434ef?s=128" /> <strong>Example Post #1</strong>
-          <span className="text-muted small">on 2/10/2020 </span>
-        </a>
-        <a href="#" className="list-group-item list-group-item-action">
-          <img className="avatar-tiny" src="https://gravatar.com/avatar/b9408a09298632b5151200f3449434ef?s=128" /> <strong>Example Post #2</strong>
-          <span className="text-muted small">on 2/10/2020 </span>
-        </a>
-        <a href="#" className="list-group-item list-group-item-action">
-          <img className="avatar-tiny" src="https://gravatar.com/avatar/b9408a09298632b5151200f3449434ef?s=128" /> <strong>Example Post #3</strong>
-          <span className="text-muted small">on 2/10/2020 </span>
-        </a>
-      </div>
+      <ProfilePost />
     </Page>
   )
 }

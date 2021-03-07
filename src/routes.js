@@ -16,15 +16,18 @@ import Home from "./Main/components/Home"
 import CreatePost from "./Main/components/CreatePost"
 import SinglePost from "./Main/components/SinglePost"
 import FlashMessages from "./Main/components/FlashMessages"
-import Profile from "./Main/components/Profile" //ERRO AQUI DEVE SER PROFILE
-//
+import Profile from "./Main/components/Profile"
+import EditPost from "./Main/components/EditPost"
+import NotFound from "./Main/components/NotFound"
+
+//Context
 import DispatchContext from "./Main/DispatchContext"
 import StateContext from "./Main/StateContext"
 
 //Default url
 Axios.defaults.baseURL = "http://localhost:8080"
 
-export default function Routes() {
+function Routes() {
   const initialState = {
     loggedIn: Boolean(localStorage.getItem("token")),
     flashMessages: [],
@@ -72,11 +75,17 @@ export default function Routes() {
           <FlashMessages messages={state.flashMessages} />
           <Header />
           <Switch>
+            <Route path="/profile/:username">
+              <Profile />
+            </Route>
             <Route path="/" exact>
               {state.loggedIn ? <Home /> : <HomeGuest />}
             </Route>
-            <Route path="/post/:id">
-              <SinglePost />
+            <Route path="/post/:id" exact>
+              <ViewSinglePost />
+            </Route>
+            <Route path="/post/:id/edit" exact>
+              <EditPost />
             </Route>
             <Route path="/create-post">
               <CreatePost />
@@ -87,13 +96,13 @@ export default function Routes() {
             <Route path="/terms">
               <Terms />
             </Route>
-            <Route path="/profile/:username">
-              <Profile />
+            <Route>
+              <NotFound />
             </Route>
           </Switch>
           <Footer />
         </BrowserRouter>
       </DispatchContext.Provider>
     </StateContext.Provider>
-  )
+  ) // A route component without a path is the default if no other path is found
 }

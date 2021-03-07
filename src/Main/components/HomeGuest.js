@@ -13,7 +13,7 @@ export default function HomeGuest() {
       await Axios.post("/register", { username, email, password })
       console.log("User was succefully created")
     } catch (e) {
-      console.log("There was a erro.")
+      console.log("There was a error.")
     }
   }
 
